@@ -434,8 +434,7 @@ async function getIconFromExtension(extensionID) {
     let extensionImages = (await (new Promise(resolve => {chrome.management.getAll(resolve)}))).filter(itm => itm.id == extensionID)[0].icons;
     console.log(extensionImages);
     let extensionImage = extensionImages[extensionImages.length - 1].url;
-	let getImage = await fetch(extensionImage);
-	return await blobToDataURL(await getImage.blob());
+	return extensionImage;
 }
 
 //Toggle extensions

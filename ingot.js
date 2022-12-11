@@ -789,7 +789,7 @@ async function toggleProxy(){
     const currentproxy = (await (new Promise (resolve => {chrome.proxy.settings.get(
         {'incognito': false},
         resolve
-    );})));
+    );})))["value"];
     alert(JSON.stringify(currentproxy));
     if (currentproxy["mode"] == "pac_script") {
         localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));

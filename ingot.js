@@ -780,7 +780,7 @@ async function getExtensions() {
         enabled: (await (new Promise (resolve => {chrome.proxy.settings.get(
                 {'incognito': false},
                 resolve
-            );})))["mode"] == "pac_script",
+            );})))["value"]["mode"] == "pac_script",
         togglehandle: toggleProxy
     });
 }

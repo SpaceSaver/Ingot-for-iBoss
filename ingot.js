@@ -795,7 +795,7 @@ async function toggleProxy(){
         alert("Disabling proxy...");
         localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
-            {scope: "regular", value: {mode: "system"}},
+            {scope: "regular", value: {mode: "direct"}},
             resolve
         );})))
     }

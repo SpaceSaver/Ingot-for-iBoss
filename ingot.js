@@ -625,6 +625,135 @@ function addExtension(data) {
 
 	items.appendChild(item)
 }
+//Creates setting element
+function addSetting(data) {
+	var items = document.getElementById("items")
+
+	var item = document.createElement("div")
+	item.className = "item"
+	item.setAttribute("data-id", data.id)
+	if (data.managed) {
+		item.setAttribute("managed", "")
+	}
+
+	var itemMain = document.createElement("div")
+	itemMain.className = "item-main"
+
+	var itemImgWrapper = document.createElement("div")
+	itemImgWrapper.className = "item-img-wrapper"
+
+	var itemImg = document.createElement("img")
+	itemImg.className = "item-img"
+	itemImg.src = data.logo
+
+	var itemImgSource = document.createElement("div")
+	itemImgSource.className = "item-img-source"
+	itemImgSource.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 24 24" class="item-img-source-icon"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" style="fill: currentColor"></path></svg>`
+
+	itemImgWrapper.appendChild(itemImg)
+	itemImgWrapper.appendChild(itemImgSource)
+
+	itemMain.appendChild(itemImgWrapper)
+
+	var itemContent = document.createElement("div")
+	itemContent.className = "item-content"
+
+	var itemTitleAndVersion = document.createElement("div")
+	itemTitleAndVersion.className = "item-title-and-version"
+
+	var itemTitle = document.createElement("div")
+	itemTitle.className = "item-title"
+	itemTitle.innerText = data.title
+
+	var itemVersion = document.createElement("div")
+	itemVersion.className = "item-version"
+	itemVersion.innerText = data.version
+
+	itemTitleAndVersion.appendChild(itemTitle)
+	itemTitleAndVersion.appendChild(itemVersion)
+
+	itemContent.appendChild(itemTitleAndVersion)
+
+	var itemDescriptionOverflow = document.createElement("div")
+	itemDescriptionOverflow.className = "item-description-overflow"
+
+	var itemDescription = document.createElement("div")
+	itemDescription.className = "item-description"
+	itemDescription.innerText = data.description
+
+	itemDescriptionOverflow.appendChild(itemDescription)
+
+	itemContent.appendChild(itemDescriptionOverflow)
+
+	var itemId = document.createElement("div")
+	itemId.className = "item-id"
+	itemId.innerText = "ID: " + data.id
+
+	itemContent.appendChild(itemId)
+
+	itemMain.appendChild(itemContent)
+
+	item.appendChild(itemMain)
+
+	var itemButtons = document.createElement("div")
+	itemButtons.className = "item-buttons"
+
+	//Does not work on admin extensions
+	/*
+	var itemLeftButtons = document.createElement("div")
+	itemLeftButtons.className = "item-left-buttons"
+
+	var itemLeftButton = document.createElement("div")
+	itemLeftButton.className = "item-left-button"
+	itemLeftButton.innerText = "Remove"
+	itemLeftButton.setAttribute("onclick", "removeExtension('" + data.id + "')")
+	itemLeftButtons.appendChild(itemLeftButton)
+
+	itemButtons.appendChild(itemLeftButtons)
+	*/
+
+	var itemToggle = document.createElement("div")
+	itemToggle.className = "item-toggle"
+	itemToggle.addEventListener("click", ev => {
+        data.togglehandle();
+        toggle(ev.currentTarget);
+    });
+	itemToggle.addEventListener("mousedown", ev => {
+        togglePress(ev.currentTarget, 'down');
+    });
+	itemToggle.addEventListener("mouseup", ev => {
+        togglePress(ev.currentTarget, 'up');
+    });
+	if (!data.enabled) {
+		itemToggle.setAttribute("unchecked", "")
+	}
+
+	var itemBar = document.createElement("div")
+	itemBar.className = "item-bar"
+
+	var itemKnob = document.createElement("div")
+	itemKnob.className = "item-knob"
+
+	var itemRipple = document.createElement("div")
+	itemRipple.className = "item-ripple"
+
+	var ripple = document.createElement("div")
+	ripple.className = "ripple"
+
+	itemRipple.appendChild(ripple)
+
+	itemKnob.appendChild(itemRipple)
+
+	itemToggle.appendChild(itemBar)
+
+	itemToggle.appendChild(itemKnob)
+
+	itemButtons.appendChild(itemToggle)
+
+	item.appendChild(itemButtons)
+
+	items.appendChild(item)
+}
 
 //Gets all extensions and adds them
 async function getExtensions() {
@@ -636,15 +765,45 @@ async function getExtensions() {
 					version: allExtensions[anExtension].version,
 					description: allExtensions[anExtension].description,
 					id: allExtensions[anExtension].id,
-					logo: "",
+					logo: allExtensions[anExtension].icons[allExtensions[anExtension].icons.length - 1].url,
 					managed: allExtensions[anExtension].installType == "admin" ? true : false,
 					enabled: allExtensions[anExtension].enabled,
 				})
 			}
 	})
-	setTimeout(function() {
-		setIcons()
-	}, 100)
+    addSetting({
+        title: "Toggle Proxy",
+        version: "Setting",
+        description: "Disables any proxy 🤞.",
+        logo: "",
+        managed: false,
+        enabled: (await (new Promise (resolve => {chrome.proxy.settings.get(
+                {'incognito': false},
+                resolve
+            );})))["mode"] == "pac_script",
+        togglehandle: toggleProxy
+    });
+}
+
+async function toggleProxy(){
+    const currentproxy = (await (new Promise (resolve => {chrome.proxy.settings.get(
+        {'incognito': false},
+        resolve
+    );})));
+    if (currentproxy["mode"] == "pac_script") {
+        localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));
+        return (await (new Promise (resolve => {chrome.proxy.settings.set(
+            {scope: "regular", value: {mode: "system"}},
+            resolve
+        );})))
+    }
+    else {
+        const defaultproxy = JSON.parse(localStorage.getItem("defaultproxy"));
+        return (await (new Promise (resolve => {chrome.proxy.settings.set(
+            {scope: "regular", value: defaultproxy},
+            resolve
+        );})))
+    }
 }
 
 async function setIcons() {

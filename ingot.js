@@ -715,7 +715,7 @@ function addSetting(data) {
 	var itemToggle = document.createElement("div")
 	itemToggle.className = "item-toggle"
 	itemToggle.addEventListener("click", ev => {
-        data.togglehandle();
+        alert(JSON.stringify(data.togglehandle(ev.currentTarget)));
         toggle(ev.currentTarget);
     });
 	itemToggle.addEventListener("mousedown", ev => {
@@ -785,7 +785,7 @@ async function getExtensions() {
     });
 }
 
-async function toggleProxy(){
+async function toggleProxy(elem){
     const currentproxy = (await (new Promise (resolve => {chrome.proxy.settings.get(
         {'incognito': false},
         resolve

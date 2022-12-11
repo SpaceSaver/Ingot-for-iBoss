@@ -799,6 +799,7 @@ async function toggleProxy(){
     }
     else {
         const defaultproxy = JSON.parse(localStorage.getItem("defaultproxy"));
+        console.log(defaultproxy);
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: defaultproxy},
             resolve

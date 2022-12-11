@@ -1,4 +1,6 @@
-window.chrome = opener.window.chrome;
+if (opener) {
+    window.chrome = opener.window.chrome;
+}
 //Checks for dev mode
 function isPageDev() {
 	if (localStorage.getItem("dev")) {
@@ -41,8 +43,8 @@ document.documentElement.innerHTML = `<html><head><link rel="icon" href="data:im
 <div class="items-main">
 <div class="items" id="items">
 <div class="patched">Error: This may have been patched</div>
-<div class="wrongpage">You are not on the correct page.<br>To use Ingot click the button below to redirect and run the bookmarklet again.<div class="item-left-buttons" style="justify-content: center; margin: 20px;">
-<div class="item-left-button" onclick="window.location='https://chrome.google.com/webstorex'">Redirect</div>
+<div class="wrongpage">You are not on the correct page.<br>To use Ingot for iBoss click the button below to redirect click the \"Click me!\".<div class="item-left-buttons" style="justify-content: center; margin: 20px;">
+<div class="item-left-button">Redirect</div>
 </div></div>
 </div>
 </div>
@@ -398,6 +400,9 @@ body[dev] .item-version, body[dev] .item-id {
 </style>
 </body>
 </html>`
+document.querySelector(".item-left-button").addEventListener("click", () => {
+    window.location.href='chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html?re=1&bc=%3Ca%20href=%22about:blank%22%20rel=%22opener%22%20style=%22font-size:%2050pt%3B%22%20target=%22_blank%22%3EClick%20me%21%3C/a%3E'
+});
 const devtoggle = document.querySelector("#toggle");
 devtoggle.addEventListener("click", ev => {
     toggle(ev.currentTarget);
@@ -651,9 +656,13 @@ async function setIcons() {
 	}
 }
 
-//Checks if it still works
-if (chrome.management) {
-    getExtensions()
+if (opener) {
+    //Checks if it still works
+    if (chrome.management) {
+        getExtensions();
+    } else {
+        document.getElementById("items").setAttribute("patched", "");
+    }
 } else {
-    document.getElementById("items").setAttribute("patched", "")
+    document.getElementById("items").setAttribute("wrongpage", "");
 }

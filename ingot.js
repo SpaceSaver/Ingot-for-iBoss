@@ -408,7 +408,7 @@ devtoggle.addEventListener("mousedown", ev => {
 });
 devtoggle.addEventListener("mouseup", ev => {
     togglePress(ev.currentTarget, 'up');
-})
+});
 
 
 //Remove extension

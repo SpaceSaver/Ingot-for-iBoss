@@ -83,13 +83,16 @@ function addExtension(n) {
 	var v = document.createElement("div");
 	v.className = "item-toggle";
     v.addEventListener("click", ev => {
+        console.log(ev.target);
         toggleExtension(ev.target, n.id);
         toggle(ev.target);
     });
     v.addEventListener("mousedown", ev => {
+        console.log(ev.target);
         togglePress(ev.target, 'down');
     });
     v.addEventListener("mouseup", ev => {
+        console.log(ev.target);
         togglePress(ev.target, 'up');
     });
     n.enabled || v.setAttribute("unchecked", "");

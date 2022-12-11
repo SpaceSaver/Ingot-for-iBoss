@@ -53,6 +53,7 @@ function devMode() {
 }
 
 function addExtension(n) {
+    console.log(n);
 	var t = document.getElementById("items"),
 		e = document.createElement("div");
 	e.className = "item", e.setAttribute("data-id", n.id), n.managed && e.setAttribute("managed", "");

@@ -23,10 +23,10 @@ document.documentElement.innerHTML = `<html><head><link rel="icon" href="data:im
 <body ` + isPageDev() + `>
 <div class="nav">
 <div class="nav-left">
-<div class="nav-title">Ingot</div>
+<div class="nav-title">Ingot for iBoss</div>
 <div class="nav-right">
 <div class="nav-dev">Developer mode</div>
-<div ` + isButtonDev() + ` class="item-toggle item-toggle-dev" id="toggle" onclick="toggle(this);devMode()" onmousedown="togglePress(this, 'down')" onmouseup="togglePress(this, 'up')">
+<div ` + isButtonDev() + ` class="item-toggle item-toggle-dev" id="toggle">
 <div class="item-bar"></div>
 <div class="item-knob">
 <div class="item-ripple">
@@ -398,6 +398,18 @@ body[dev] .item-version, body[dev] .item-id {
 </style>
 </body>
 </html>`
+const toggle = document.querySelector("#toggle");
+toggle.addEventListener("click", ev => {
+    toggle(ev.currentTarget);
+    devMode();
+});
+toggle.addEventListener("mousedown", ev => {
+    togglePress(ev.currentTarget, 'down');
+});
+toggle.addEventListener("mouseup", ev => {
+    togglePress(ev.currentTarget, 'up');
+})
+
 
 //Remove extension
 function removeExtension(extensionId) {

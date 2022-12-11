@@ -1,3 +1,4 @@
+window.chrome = opener.window.chrome;
 //Checks for dev mode
 function isPageDev() {
 	if (localStorage.getItem("dev")) {

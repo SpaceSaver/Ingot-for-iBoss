@@ -25,7 +25,7 @@ function blobToDataURL(n) {
 }
 async function getIconFromExtension(n) {
 	if (!n) return "";
-	var t = await fetch("https://chrome.google.com/webstore/detail/" + n),
+	var t = await opener.window.fetch("https://chrome.google.com/webstore/detail/" + n),
 		e = await t.text(),
 		i = (new DOMParser).parseFromString(e, "text/html");
 	if (!i.querySelector("img.e-f-s[src]")) return "";

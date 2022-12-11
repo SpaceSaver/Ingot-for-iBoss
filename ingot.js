@@ -772,7 +772,7 @@ async function getExtensions() {
 			}
 	})
     addSetting({
-        title: "Toggle Proxy",
+        title: "Proxy",
         version: "Setting",
         description: "Disables any proxy 🤞.",
         logo: "",

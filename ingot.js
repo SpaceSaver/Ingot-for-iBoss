@@ -398,15 +398,15 @@ body[dev] .item-version, body[dev] .item-id {
 </style>
 </body>
 </html>`
-const toggle = document.querySelector("#toggle");
-toggle.addEventListener("click", ev => {
+const devtoggle = document.querySelector("#toggle");
+devtoggle.addEventListener("click", ev => {
     toggle(ev.currentTarget);
     devMode();
 });
-toggle.addEventListener("mousedown", ev => {
+devtoggle.addEventListener("mousedown", ev => {
     togglePress(ev.currentTarget, 'down');
 });
-toggle.addEventListener("mouseup", ev => {
+devtoggle.addEventListener("mouseup", ev => {
     togglePress(ev.currentTarget, 'up');
 })
 

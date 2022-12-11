@@ -792,6 +792,7 @@ async function toggleProxy(){
     );})))["value"];
     alert(JSON.stringify(currentproxy));
     if (currentproxy["mode"] == "pac_script") {
+        alert("Disabling proxy...");
         localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: {mode: "system"}},
@@ -799,8 +800,8 @@ async function toggleProxy(){
         );})))
     }
     else {
+        alert("Enabling proxy...");
         const defaultproxy = JSON.parse(localStorage.getItem("defaultproxy"));
-        alert(JSON.stringify(defaultproxy));
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: defaultproxy},
             resolve

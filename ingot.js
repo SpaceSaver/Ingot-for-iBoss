@@ -1,130 +1,643 @@
-window.chrome = window.opener.chrome;
+//Checks for dev mode
 function isPageDev() {
-	return localStorage.getItem("dev") ? "dev" : ""
+	if (localStorage.getItem("dev")) {
+		return "dev"
+	} else {
+		return "";
+	}
 }
 
 function isButtonDev() {
-	return localStorage.getItem("dev") ? "" : "unchecked"
+	if (!localStorage.getItem("dev")) {
+		return "unchecked"
+	} else {
+		return "";
+	}
 }
 
-function removeExtension(n) {
-	chrome.management.uninstall(n)
+//Set base page code
+document.documentElement.innerHTML = `<html><head><link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'><path fill='white' d='M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z'></path></svg>">
+<title>Ingot</title>
+</head>
+<body ` + isPageDev() + `>
+<div class="nav">
+<div class="nav-left">
+<div class="nav-title">Ingot</div>
+<div class="nav-right">
+<div class="nav-dev">Developer mode</div>
+<div ` + isButtonDev() + ` class="item-toggle item-toggle-dev" id="toggle" onclick="toggle(this);devMode()" onmousedown="togglePress(this, 'down')" onmouseup="togglePress(this, 'up')">
+<div class="item-bar"></div>
+<div class="item-knob">
+<div class="item-ripple">
+<div class="ripple"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="items-main">
+<div class="items" id="items">
+<div class="patched">Error: This may have been patched</div>
+<div class="wrongpage">You are not on the correct page.<br>To use Ingot click the button below to redirect and run the bookmarklet again.<div class="item-left-buttons" style="justify-content: center; margin: 20px;">
+<div class="item-left-button" onclick="window.location='https://chrome.google.com/webstorex'">Redirect</div>
+</div></div>
+</div>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+* {
+	font-family: "Roboto";
 }
 
-function blobToDataURL(n) {
-	return new Promise(((t, e) => {
-		var i = new FileReader;
-		i.onload = function(n) {
-			t(n.target.result)
-		}, i.onerror = function(n) {
-			e(i.error)
-		}, i.onabort = function(n) {
-			e(new Error("Read aborted"))
-		}, i.readAsDataURL(n)
-	}))
-}
-async function getIconFromExtension(n) {
-	if (!n) return "";
-	var t = await opener.window.fetch("https://chrome.google.com/webstore/detail/" + n),
-		e = await t.text(),
-		i = (new DOMParser).parseFromString(e, "text/html");
-	if (!i.querySelector("img.e-f-s[src]")) return "";
-	var o = i.querySelector("img.e-f-s[src]").src,
-		r = await fetch(o);
-	return await blobToDataURL(await r.blob())
+:root {
+	color-scheme: dark;
 }
 
-function toggleExtension(n, t) {
-	n.hasAttribute("unchecked") ? chrome.management.setEnabled(t, !0) : chrome.management.setEnabled(t, !1)
+body {
+	background: #202124;
+	margin: 0;
+	padding: 0;
 }
 
-function toggle(n) {
-	n.hasAttribute("unchecked") ? n.removeAttribute("unchecked") : n.setAttribute("unchecked", "")
+.nav {
+	width: 100%;
+	height: 55px;
+	background: #292a2d;
+	border-bottom: 1px solid rgba(255, 255, 255, .1);
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 9;
 }
 
-function togglePress(n, t) {
-	"down" == t ? n.children[1].children[0].children[0].setAttribute("open", "") : setTimeout((function() {
-		n.children[1].children[0].children[0].style.display = "none", n.children[1].children[0].children[0].removeAttribute("open"), n.children[1].children[0].children[0].style.display = "initial"
-	}), 80)
+.nav-left {
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	padding-inline-start: calc(12px + 6px);
+	height: 55px;
 }
 
+.nav-right {
+	position: absolute;
+	right: 0;
+	left: 0;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.nav-dev {
+	color: rgb(154, 160, 166);
+	font-size: 13px;
+	margin-inline-end: calc(16px + 30px);
+	margin-bottom: 3px;
+}
+
+.item-toggle-dev {
+	transform: translateX(-30px);
+}
+
+.nav-title {
+	color: rgb(232, 234, 237);
+	font-size: 22px;
+	letter-spacing: .25px;
+	line-height: normal;
+	margin-inline-start: 6px;
+	padding-inline-end: 12px;
+	font-weight: 500;
+}
+
+.items-main {
+	min-width: 400px;
+	padding: 24px 60px 64px;
+	margin-top: 57px;
+}
+
+.items {
+	display: grid;
+	grid-column-gap: 12px;
+	grid-row-gap: 12px;
+	grid-template-columns: repeat(auto-fill,400px);
+	justify-content: center;
+	margin: auto;
+/*max-width: calc(400px * 3 + 12pz * 3);*/;
+}
+
+.item {
+	height: 160px;
+	width: 400px;
+	background: #292a2d;
+	border-radius: 8px;
+	box-shadow: rgba(0, 0, 0, .3) 0 1px 2px 0, rgba(0, 0, 0, .15) 0 2px 6px 2px;
+/*transition: height .3s cubic-bezier(.25,.1,.25,1);*/;
+}
+
+.item-main {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	padding: 16px 20px;
+	height: 80px;
+}
+
+.item-img-wrapper {
+	align-self: flex-start;
+	display: flex;
+	padding: 6px;
+	position: relative;
+}
+
+.item-img {
+	height: 36px;
+	width: 36px;
+	border-radius: 6px;
+	background: #202124;
+	text-indent: -10000px;
+}
+
+.item-img-source {
+	align-items: center;
+	background: #f1592b;
+	border-radius: 50%;
+	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 22%), 0 2px 2px 0 rgb(0 0 0 / 12%);
+	display: flex;
+	height: 22px;
+	justify-content: center;
+	width: 22px;
+	margin-inline-start: 24px;
+	margin-top: 24px;
+	position: absolute;
+	display: none;
+}
+
+.item[managed] .item-img-source {
+	display: flex;
+}
+
+.item-img-source-icon {
+	pointer-events: none;
+	display: block;
+	height: 16px;
+	width: 16px;
+	color: white;
+}
+
+.item-content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	margin-inline-start: 24px;
+	width: 288px;
+	overflow: hidden;
+}
+
+.item-title-and-version {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+}
+
+.item-title {
+	margin-inline-end: 8px;
+	color: rgb(232, 234, 237);
+	white-space: nowrap;
+	margin-bottom: 4px;
+	font-size: 13px;
+	margin-top: 2px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.item-version {
+	color: rgb(154, 160, 166);
+	font-size: 13px;
+	margin-bottom: 4px;
+	display: none;
+}
+
+.item-description-overflow {
+	height: 84px;
+	overflow: hidden;
+}
+
+.item-description {
+	color: rgb(154, 160, 166);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex: 1;
+	font-size: 13px;
+	line-height: 20.02px;
+	margin-top: 3px;
+}
+
+.item-id {
+	color: rgb(154, 160, 166);
+	font-size: 13px;
+	margin-top: 5px;
+	display: none;
+}
+
+.item-buttons {
+	height: 48px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
+	padding-right: 38px;
+	padding-bottom: 8px;
+	padding-top: 8px;
+	box-sizing: border-box;
+}
+
+.item-left-buttons {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex: 1;
+	flex-basis: 1e-9px;
+}
+
+.item-left-button {
+	border: 1px solid rgb(95, 99, 104);
+	align-items: center;
+	border-radius: 4px;
+	box-sizing: border-box;
+	color: rgb(138, 180, 248);
+	cursor: pointer;
+	display: inline-flex;
+	font-weight: 500;
+	height: 32px;
+	justify-content: center;
+	min-width: 5.14em;
+	overflow: hidden;
+	padding: 8px 16px;
+	user-select: none;
+	margin-inline-start: 8px;
+	font-size: 13px;
+	line-height: 20.02px;
+}
+
+.item-left-button:hover {
+	background: rgba(138, 180, 248, 0.08);
+}
+
+.item-left-button:active {
+	background: rgba(138, 180, 248, 0.25);
+}
+
+.item-toggle {
+	position: relative;
+	cursor: pointer;
+}
+
+.item-toggle[unchecked] .item-bar {
+	background: rgb(154, 160, 166);
+	opacity: 1;
+}
+
+.item-toggle[unchecked] .item-knob {
+	background: rgb(218, 220, 224);
+	transform: initial;
+}
+
+.item-bar {
+	background: rgb(138, 180, 248);
+	border-radius: 8px;
+	height: 12px;
+	left: 3px;
+	position: absolute;
+	top: 2px;
+	transition: background-color linear 80ms;
+	width: 28px;
+	opacity: 0.5;
+}
+
+.item-knob {
+	background: rgb(138, 180, 248);
+	transform: translate3d(18px, 0, 0);
+	border-radius: 50%;
+	display: block;
+	height: 16px;
+	position: relative;
+	transition: transform linear 80ms, background-color linear 80ms;
+	width: 16px;
+	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 40%);
+}
+
+.item-ripple {
+	color: rgb(218, 220, 224);
+	height: 40px;
+	left: 50%;
+	outline: none;
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	transition: color linear 80ms;
+	width: 40px;
+}
+
+.ripple {
+	height: 40px;
+	width: 40px;
+	border-radius: 50%;
+	background-color: currentcolor;
+	left: 0;
+	opacity: 0.25;
+	pointer-events: none;
+	position: absolute;
+	will-change: height, transform, width;
+	transform: scaleX(0) scaleY(0);
+	transition: transform linear 80ms;
+}
+
+.ripple[open] {
+	transform: initial;
+}
+
+body[dev] .item {
+	height: 208px;
+}
+
+body[dev] .item-main {
+	height: 125px;
+}
+
+body[dev] .item-version, body[dev] .item-id {
+	display: initial;
+}
+
+.patched, .wrongpage {
+	color: rgb(154, 160, 166);
+	font-size: 15.99px;
+	font-weight: 500;
+	margin-top: 80px;
+	text-align: center;
+	display: none;
+}
+
+.items[patched], .items[wrongpage] {
+	grid-template-columns: initial;
+}
+
+.items[patched] .patched {
+	display: initial;
+}
+
+.items[wrongpage] .wrongpage {
+	display: flow-root;
+}
+</style>
+</body>
+</html>`
+
+//Remove extension
+function removeExtension(extensionId) {
+	chrome.management.uninstall(extensionId)
+}
+
+//Simple function to make image to data url
+function blobToDataURL(blob) {
+	return new Promise((resolve, reject) => {
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			resolve(e.target.result)
+		}
+		reader.onerror = function(e) {
+			reject(reader.error)
+		}
+		reader.onabort = function(e) {
+			reject(new Error("Read aborted"))
+		}
+		reader.readAsDataURL(blob);
+	})
+}
+
+//Gets the icon from extensions
+async function getIconFromExtension(extensionID) {
+	if (!extensionID) return "";
+
+	var extensionPage = await fetch("https://chrome.google.com/webstore/detail/" + extensionID)
+	var extensionPageCode = await extensionPage.text()
+	var dom = new DOMParser().parseFromString(extensionPageCode, "text/html")
+	if (!dom.querySelector("img.e-f-s[src]")) return "";
+	var extensionImage = dom.querySelector("img.e-f-s[src]").src;
+	var getImage = await fetch(extensionImage);
+	return await blobToDataURL(await getImage.blob());
+}
+
+//Toggle extensions
+function toggleExtension(e, extensionId) {
+	if (e.hasAttribute("unchecked")) {
+		chrome.management.setEnabled(extensionId, true)
+	} else {
+		chrome.management.setEnabled(extensionId, false)
+	}
+}
+
+//Toggle the toggle
+function toggle(e) {
+	if (e.hasAttribute("unchecked")) {
+		e.removeAttribute("unchecked")
+	} else {
+		e.setAttribute("unchecked", "")
+	}
+}
+
+//Toggle animation
+function togglePress(e, dir) {
+	if (dir == "down") {
+		e.children[1].children[0].children[0].setAttribute("open", "")
+	} else {
+		setTimeout(function() {
+			e.children[1].children[0].children[0].style.display = "none"
+			e.children[1].children[0].children[0].removeAttribute("open")
+			e.children[1].children[0].children[0].style.display = "initial"
+		}, 80)
+	}
+}
+
+//Sets dev mode
 function devMode() {
-	document.body.hasAttribute("dev") ? (document.body.removeAttribute("dev"), localStorage.removeItem("dev")) : (document.body.setAttribute("dev", ""), localStorage.setItem("dev", "true"))
+	if (document.body.hasAttribute("dev")) {
+		document.body.removeAttribute("dev")
+		localStorage.removeItem("dev")
+	} else {
+		document.body.setAttribute("dev", "")
+		localStorage.setItem("dev", "true")
+	}
 }
 
-function addExtension(n) {
-    console.log(n);
-	var t = document.getElementById("items"),
-		e = document.createElement("div");
-	e.className = "item", e.setAttribute("data-id", n.id), n.managed && e.setAttribute("managed", "");
-	var i = document.createElement("div");
-	i.className = "item-main";
-	var o = document.createElement("div");
-	o.className = "item-img-wrapper";
-	var r = document.createElement("img");
-	r.className = "item-img", r.src = n.logo;
-	var a = document.createElement("div");
-	a.className = "item-img-source", a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 24 24" class="item-img-source-icon"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" style="fill: currentColor"></path></svg>', o.appendChild(r), o.appendChild(a), i.appendChild(o);
-	var d = document.createElement("div");
-	d.className = "item-content";
-	var l = document.createElement("div");
-	l.className = "item-title-and-version";
-	var s = document.createElement("div");
-	s.className = "item-title", s.innerText = n.title;
-	var m = document.createElement("div");
-	m.className = "item-version", m.innerText = n.version, l.appendChild(s), l.appendChild(m), d.appendChild(l);
-	var c = document.createElement("div");
-	c.className = "item-description-overflow";
-	var p = document.createElement("div");
-	p.className = "item-description", p.innerText = n.description, c.appendChild(p), d.appendChild(c);
-	var g = document.createElement("div");
-	g.className = "item-id", g.innerText = "ID: " + n.id, d.appendChild(g), i.appendChild(d), e.appendChild(i);
-	var h = document.createElement("div");
-	h.className = "item-buttons";
-	var v = document.createElement("div");
-	v.className = "item-toggle";
-    v.addEventListener("click", ev => {
-        console.log(ev.currentTarget);
-        toggleExtension(ev.currentTarget, n.id);
+//Creates extension element
+function addExtension(data) {
+	var items = document.getElementById("items")
+
+	var item = document.createElement("div")
+	item.className = "item"
+	item.setAttribute("data-id", data.id)
+	if (data.managed) {
+		item.setAttribute("managed", "")
+	}
+
+	var itemMain = document.createElement("div")
+	itemMain.className = "item-main"
+
+	var itemImgWrapper = document.createElement("div")
+	itemImgWrapper.className = "item-img-wrapper"
+
+	var itemImg = document.createElement("img")
+	itemImg.className = "item-img"
+	itemImg.src = data.logo
+
+	var itemImgSource = document.createElement("div")
+	itemImgSource.className = "item-img-source"
+	itemImgSource.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 24 24" class="item-img-source-icon"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" style="fill: currentColor"></path></svg>`
+
+	itemImgWrapper.appendChild(itemImg)
+	itemImgWrapper.appendChild(itemImgSource)
+
+	itemMain.appendChild(itemImgWrapper)
+
+	var itemContent = document.createElement("div")
+	itemContent.className = "item-content"
+
+	var itemTitleAndVersion = document.createElement("div")
+	itemTitleAndVersion.className = "item-title-and-version"
+
+	var itemTitle = document.createElement("div")
+	itemTitle.className = "item-title"
+	itemTitle.innerText = data.title
+
+	var itemVersion = document.createElement("div")
+	itemVersion.className = "item-version"
+	itemVersion.innerText = data.version
+
+	itemTitleAndVersion.appendChild(itemTitle)
+	itemTitleAndVersion.appendChild(itemVersion)
+
+	itemContent.appendChild(itemTitleAndVersion)
+
+	var itemDescriptionOverflow = document.createElement("div")
+	itemDescriptionOverflow.className = "item-description-overflow"
+
+	var itemDescription = document.createElement("div")
+	itemDescription.className = "item-description"
+	itemDescription.innerText = data.description
+
+	itemDescriptionOverflow.appendChild(itemDescription)
+
+	itemContent.appendChild(itemDescriptionOverflow)
+
+	var itemId = document.createElement("div")
+	itemId.className = "item-id"
+	itemId.innerText = "ID: " + data.id
+
+	itemContent.appendChild(itemId)
+
+	itemMain.appendChild(itemContent)
+
+	item.appendChild(itemMain)
+
+	var itemButtons = document.createElement("div")
+	itemButtons.className = "item-buttons"
+
+	//Does not work on admin extensions
+	/*
+	var itemLeftButtons = document.createElement("div")
+	itemLeftButtons.className = "item-left-buttons"
+
+	var itemLeftButton = document.createElement("div")
+	itemLeftButton.className = "item-left-button"
+	itemLeftButton.innerText = "Remove"
+	itemLeftButton.setAttribute("onclick", "removeExtension('" + data.id + "')")
+	itemLeftButtons.appendChild(itemLeftButton)
+
+	itemButtons.appendChild(itemLeftButtons)
+	*/
+
+	var itemToggle = document.createElement("div")
+	itemToggle.className = "item-toggle"
+	itemToggle.addEventListener("click", ev => {
+        toggleExtension(ev.currentTarget, data.id);
         toggle(ev.currentTarget);
     });
-    v.addEventListener("mousedown", ev => {
-        console.log(ev.currentTarget);
+	itemToggle.addEventListener("mousedown", ev => {
         togglePress(ev.currentTarget, 'down');
     });
-    v.addEventListener("mouseup", ev => {
-        console.log(ev.currentTarget);
+	itemToggle.addEventListener("mouseup", ev => {
         togglePress(ev.currentTarget, 'up');
     });
-    n.enabled || v.setAttribute("unchecked", "");
-	var x = document.createElement("div");
-	x.className = "item-bar";
-	var u = document.createElement("div");
-	u.className = "item-knob";
-	var b = document.createElement("div");
-	b.className = "item-ripple";
-	var f = document.createElement("div");
-	f.className = "ripple", b.appendChild(f), u.appendChild(b), v.appendChild(x), v.appendChild(u), h.appendChild(v), e.appendChild(h), t.appendChild(e)
+	if (!data.enabled) {
+		itemToggle.setAttribute("unchecked", "")
+	}
+
+	var itemBar = document.createElement("div")
+	itemBar.className = "item-bar"
+
+	var itemKnob = document.createElement("div")
+	itemKnob.className = "item-knob"
+
+	var itemRipple = document.createElement("div")
+	itemRipple.className = "item-ripple"
+
+	var ripple = document.createElement("div")
+	ripple.className = "ripple"
+
+	itemRipple.appendChild(ripple)
+
+	itemKnob.appendChild(itemRipple)
+
+	itemToggle.appendChild(itemBar)
+
+	itemToggle.appendChild(itemKnob)
+
+	itemButtons.appendChild(itemToggle)
+
+	item.appendChild(itemButtons)
+
+	items.appendChild(item)
 }
+
+//Gets all extensions and adds them
 async function getExtensions() {
-	chrome.management.getAll((async function(n) {
-		for (let t in n) n[t].isApp || addExtension({
-			title: n[t].name,
-			version: n[t].version,
-			description: n[t].description,
-			id: n[t].id,
-			logo: "",
-			managed: "admin" == n[t].installType,
-			enabled: n[t].enabled
-		})
-	})), setTimeout((function() {
+	chrome.management.getAll(async function(allExtensions) {
+		for (let anExtension in allExtensions)
+			if (!allExtensions[anExtension].isApp) {
+				addExtension({
+					title: allExtensions[anExtension].name,
+					version: allExtensions[anExtension].version,
+					description: allExtensions[anExtension].description,
+					id: allExtensions[anExtension].id,
+					logo: "",
+					managed: allExtensions[anExtension].installType == "admin" ? true : false,
+					enabled: allExtensions[anExtension].enabled,
+				})
+			}
+	})
+	setTimeout(function() {
 		setIcons()
-	}), 100)
+	}, 100)
 }
+
 async function setIcons() {
-	var n = document.querySelectorAll(".items .item");
-	for (let t in n) try {
-		n[t].querySelector(".item-main .item-img-wrapper .item-img").src = await getIconFromExtension(n[t].dataset.id)
-	} catch {}
+	var items = document.querySelectorAll(".items .item")
+	for (let item in items) {
+		try {
+			items[item].querySelector(".item-main .item-img-wrapper .item-img").src = await getIconFromExtension(items[item].dataset.id)
+		} catch {}
+	}
 }
-document.documentElement.innerHTML = "<html><head><link rel=\"icon\" href=\"data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'><path fill='white' d='M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z'></path></svg>\">\n<title>Ingot</title>\n</head>\n<body " + isPageDev() + '>\n<div class="nav">\n<div class="nav-left">\n<div class="nav-title">Ingot</div>\n<div class="nav-right">\n<div class="nav-dev">Developer mode</div>\n<div ' + isButtonDev() + ' class="item-toggle item-toggle-dev" id="toggle" onclick="toggle(this);devMode()" onmousedown="togglePress(this, \'down\')" onmouseup="togglePress(this, \'up\')">\n<div class="item-bar"></div>\n<div class="item-knob">\n<div class="item-ripple">\n<div class="ripple"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n\n<div class="items-main">\n<div class="items" id="items">\n<div class="patched">Error: This may have been patched</div>\n<div class="wrongpage">You are not on the correct page.<br>To use Ingot click the button below to redirect and run the bookmarklet again.<div class="item-left-buttons" style="justify-content: center; margin: 20px;">\n<div class="item-left-button" onclick="window.location=\'https://chrome.google.com/webstorex\'">Redirect</div>\n</div></div>\n</div>\n</div>\n\n<style>\n@import url(\'https://fonts.googleapis.com/css2?family=Roboto&display=swap\');\n\n@import url(\'https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap\');\n\n* {\n\tfont-family: "Roboto";\n}\n\n:root {\n\tcolor-scheme: dark;\n}\n\nbody {\n\tbackground: #202124;\n\tmargin: 0;\n\tpadding: 0;\n}\n\n.nav {\n\twidth: 100%;\n\theight: 55px;\n\tbackground: #292a2d;\n\tborder-bottom: 1px solid rgba(255, 255, 255, .1);\n\tposition: fixed;\n\ttop: 0;\n\tright: 0;\n\tleft: 0;\n\tz-index: 9;\n}\n\n.nav-left {\n\talign-items: center;\n\tbox-sizing: border-box;\n\tdisplay: flex;\n\tpadding-inline-start: calc(12px + 6px);\n\theight: 55px;\n}\n\n.nav-right {\n\tposition: absolute;\n\tright: 0;\n\tleft: 0;\n\tdisplay: flex;\n\tjustify-content: flex-end;\n}\n\n.nav-dev {\n\tcolor: rgb(154, 160, 166);\n\tfont-size: 13px;\n\tmargin-inline-end: calc(16px + 30px);\n\tmargin-bottom: 3px;\n}\n\n.item-toggle-dev {\n\ttransform: translateX(-30px);\n}\n\n.nav-title {\n\tcolor: rgb(232, 234, 237);\n\tfont-size: 22px;\n\tletter-spacing: .25px;\n\tline-height: normal;\n\tmargin-inline-start: 6px;\n\tpadding-inline-end: 12px;\n\tfont-weight: 500;\n}\n\n.items-main {\n\tmin-width: 400px;\n\tpadding: 24px 60px 64px;\n\tmargin-top: 57px;\n}\n\n.items {\n\tdisplay: grid;\n\tgrid-column-gap: 12px;\n\tgrid-row-gap: 12px;\n\tgrid-template-columns: repeat(auto-fill,400px);\n\tjustify-content: center;\n\tmargin: auto;\n/*max-width: calc(400px * 3 + 12pz * 3);*/;\n}\n\n.item {\n\theight: 160px;\n\twidth: 400px;\n\tbackground: #292a2d;\n\tborder-radius: 8px;\n\tbox-shadow: rgba(0, 0, 0, .3) 0 1px 2px 0, rgba(0, 0, 0, .15) 0 2px 6px 2px;\n/*transition: height .3s cubic-bezier(.25,.1,.25,1);*/;\n}\n\n.item-main {\n\tdisplay: flex;\n\tflex: 1;\n\tmin-height: 0;\n\tpadding: 16px 20px;\n\theight: 80px;\n}\n\n.item-img-wrapper {\n\talign-self: flex-start;\n\tdisplay: flex;\n\tpadding: 6px;\n\tposition: relative;\n}\n\n.item-img {\n\theight: 36px;\n\twidth: 36px;\n\tborder-radius: 6px;\n\tbackground: #202124;\n\ttext-indent: -10000px;\n}\n\n.item-img-source {\n\talign-items: center;\n\tbackground: #f1592b;\n\tborder-radius: 50%;\n\tbox-shadow: 0 1px 1px 0 rgb(0 0 0 / 22%), 0 2px 2px 0 rgb(0 0 0 / 12%);\n\tdisplay: flex;\n\theight: 22px;\n\tjustify-content: center;\n\twidth: 22px;\n\tmargin-inline-start: 24px;\n\tmargin-top: 24px;\n\tposition: absolute;\n\tdisplay: none;\n}\n\n.item[managed] .item-img-source {\n\tdisplay: flex;\n}\n\n.item-img-source-icon {\n\tpointer-events: none;\n\tdisplay: block;\n\theight: 16px;\n\twidth: 16px;\n\tcolor: white;\n}\n\n.item-content {\n\tdisplay: flex;\n\tflex: 1;\n\tflex-direction: column;\n\tmargin-inline-start: 24px;\n\twidth: 288px;\n\toverflow: hidden;\n}\n\n.item-title-and-version {\n\tdisplay: flex;\n\talign-items: center;\n\tflex-direction: row;\n}\n\n.item-title {\n\tmargin-inline-end: 8px;\n\tcolor: rgb(232, 234, 237);\n\twhite-space: nowrap;\n\tmargin-bottom: 4px;\n\tfont-size: 13px;\n\tmargin-top: 2px;\n\ttext-overflow: ellipsis;\n\toverflow: hidden;\n}\n\n.item-version {\n\tcolor: rgb(154, 160, 166);\n\tfont-size: 13px;\n\tmargin-bottom: 4px;\n\tdisplay: none;\n}\n\n.item-description-overflow {\n\theight: 84px;\n\toverflow: hidden;\n}\n\n.item-description {\n\tcolor: rgb(154, 160, 166);\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tflex: 1;\n\tfont-size: 13px;\n\tline-height: 20.02px;\n\tmargin-top: 3px;\n}\n\n.item-id {\n\tcolor: rgb(154, 160, 166);\n\tfont-size: 13px;\n\tmargin-top: 5px;\n\tdisplay: none;\n}\n\n.item-buttons {\n\theight: 48px;\n\tdisplay: flex;\n\tflex-direction: row;\n\talign-items: center;\n\tjustify-content: flex-end;\n\tpadding-right: 38px;\n\tpadding-bottom: 8px;\n\tpadding-top: 8px;\n\tbox-sizing: border-box;\n}\n\n.item-left-buttons {\n\tdisplay: flex;\n\tflex-direction: row;\n\talign-items: center;\n\tflex: 1;\n\tflex-basis: 1e-9px;\n}\n\n.item-left-button {\n\tborder: 1px solid rgb(95, 99, 104);\n\talign-items: center;\n\tborder-radius: 4px;\n\tbox-sizing: border-box;\n\tcolor: rgb(138, 180, 248);\n\tcursor: pointer;\n\tdisplay: inline-flex;\n\tfont-weight: 500;\n\theight: 32px;\n\tjustify-content: center;\n\tmin-width: 5.14em;\n\toverflow: hidden;\n\tpadding: 8px 16px;\n\tuser-select: none;\n\tmargin-inline-start: 8px;\n\tfont-size: 13px;\n\tline-height: 20.02px;\n}\n\n.item-left-button:hover {\n\tbackground: rgba(138, 180, 248, 0.08);\n}\n\n.item-left-button:active {\n\tbackground: rgba(138, 180, 248, 0.25);\n}\n\n.item-toggle {\n\tposition: relative;\n\tcursor: pointer;\n}\n\n.item-toggle[unchecked] .item-bar {\n\tbackground: rgb(154, 160, 166);\n\topacity: 1;\n}\n\n.item-toggle[unchecked] .item-knob {\n\tbackground: rgb(218, 220, 224);\n\ttransform: initial;\n}\n\n.item-bar {\n\tbackground: rgb(138, 180, 248);\n\tborder-radius: 8px;\n\theight: 12px;\n\tleft: 3px;\n\tposition: absolute;\n\ttop: 2px;\n\ttransition: background-color linear 80ms;\n\twidth: 28px;\n\topacity: 0.5;\n}\n\n.item-knob {\n\tbackground: rgb(138, 180, 248);\n\ttransform: translate3d(18px, 0, 0);\n\tborder-radius: 50%;\n\tdisplay: block;\n\theight: 16px;\n\tposition: relative;\n\ttransition: transform linear 80ms, background-color linear 80ms;\n\twidth: 16px;\n\tbox-shadow: 0 1px 3px 0 rgb(0 0 0 / 40%);\n}\n\n.item-ripple {\n\tcolor: rgb(218, 220, 224);\n\theight: 40px;\n\tleft: 50%;\n\toutline: none;\n\tpointer-events: none;\n\tposition: absolute;\n\ttop: 50%;\n\ttransform: translate(-50%, -50%);\n\ttransition: color linear 80ms;\n\twidth: 40px;\n}\n\n.ripple {\n\theight: 40px;\n\twidth: 40px;\n\tborder-radius: 50%;\n\tbackground-color: currentcolor;\n\tleft: 0;\n\topacity: 0.25;\n\tpointer-events: none;\n\tposition: absolute;\n\twill-change: height, transform, width;\n\ttransform: scaleX(0) scaleY(0);\n\ttransition: transform linear 80ms;\n}\n\n.ripple[open] {\n\ttransform: initial;\n}\n\nbody[dev] .item {\n\theight: 208px;\n}\n\nbody[dev] .item-main {\n\theight: 125px;\n}\n\nbody[dev] .item-version, body[dev] .item-id {\n\tdisplay: initial;\n}\n\n.patched, .wrongpage {\n\tcolor: rgb(154, 160, 166);\n\tfont-size: 15.99px;\n\tfont-weight: 500;\n\tmargin-top: 80px;\n\ttext-align: center;\n\tdisplay: none;\n}\n\n.items[patched], .items[wrongpage] {\n\tgrid-template-columns: initial;\n}\n\n.items[patched] .patched {\n\tdisplay: initial;\n}\n\n.items[wrongpage] .wrongpage {\n\tdisplay: flow-root;\n}\n</style>\n</body>\n</html>', chrome.management ? getExtensions() : document.getElementById("items").setAttribute("patched", "");
+
+//Checks if it still works
+if (chrome.management) {
+    getExtensions()
+} else {
+    document.getElementById("items").setAttribute("patched", "")
+}

@@ -432,6 +432,7 @@ async function getIconFromExtension(extensionID) {
 	// if (!dom.querySelector("img.e-f-s[src]")) return "";
 	// var extensionImage = dom.querySelector("img.e-f-s[src]").src;
     let extensionImages = (await (new Promise(resolve => {chrome.management.getAll(resolve)}))).filter(itm => itm.id == extensionID)[0].icons;
+    console.log(extensionImages);
     let extensionImage = extensionImages[extensionImages.length - 1]
 	let getImage = await fetch(extensionImage);
 	return await blobToDataURL(await getImage.blob());

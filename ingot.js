@@ -83,17 +83,17 @@ function addExtension(n) {
 	var v = document.createElement("div");
 	v.className = "item-toggle";
     v.addEventListener("click", ev => {
-        console.log(ev.target);
-        toggleExtension(ev.target, n.id);
-        toggle(ev.target);
+        console.log(ev.currentTarget);
+        toggleExtension(ev.currentTarget, n.id);
+        toggle(ev.currentTarget);
     });
     v.addEventListener("mousedown", ev => {
-        console.log(ev.target);
-        togglePress(ev.target, 'down');
+        console.log(ev.currentTarget);
+        togglePress(ev.currentTarget, 'down');
     });
     v.addEventListener("mouseup", ev => {
-        console.log(ev.target);
-        togglePress(ev.target, 'up');
+        console.log(ev.currentTarget);
+        togglePress(ev.currentTarget, 'up');
     });
     n.enabled || v.setAttribute("unchecked", "");
 	var x = document.createElement("div");

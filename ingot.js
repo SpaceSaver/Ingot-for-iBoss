@@ -425,13 +425,15 @@ function blobToDataURL(blob) {
 async function getIconFromExtension(extensionID) {
 	if (!extensionID) return "";
 
-	var extensionPage = await opener.window.fetch("https://chrome.google.com/webstore/detail/" + extensionID)
-    console.log(extensionPage);
-	var extensionPageCode = await extensionPage.text()
-	var dom = new DOMParser().parseFromString(extensionPageCode, "text/html")
-	if (!dom.querySelector("img.e-f-s[src]")) return "";
-	var extensionImage = dom.querySelector("img.e-f-s[src]").src;
-	var getImage = await fetch(extensionImage);
+	// var extensionPage = await opener.window.fetch("https://chrome.google.com/webstore/detail/" + extensionID)
+    // console.log(extensionPage);
+	// var extensionPageCode = await extensionPage.text()
+	// var dom = new DOMParser().parseFromString(extensionPageCode, "text/html")
+	// if (!dom.querySelector("img.e-f-s[src]")) return "";
+	// var extensionImage = dom.querySelector("img.e-f-s[src]").src;
+    let extensionImages = (await (new Promise(resolve => {chrome.management.getAll(resolve)}))).filter(itm => itm.id == extensionID)[0].icons;
+    let extensionImage = extensionImages[extensionImages.length - 1]
+	let getImage = await fetch(extensionImage);
 	return await blobToDataURL(await getImage.blob());
 }
 

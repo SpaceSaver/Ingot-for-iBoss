@@ -425,7 +425,7 @@ function blobToDataURL(blob) {
 async function getIconFromExtension(extensionID) {
 	if (!extensionID) return "";
 
-	var extensionPage = await fetch("https://chrome.google.com/webstore/detail/" + extensionID)
+	var extensionPage = await opener.window.fetch("https://chrome.google.com/webstore/detail/" + extensionID)
 	var extensionPageCode = await extensionPage.text()
 	var dom = new DOMParser().parseFromString(extensionPageCode, "text/html")
 	if (!dom.querySelector("img.e-f-s[src]")) return "";

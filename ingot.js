@@ -81,7 +81,7 @@ function addExtension(n) {
 	var h = document.createElement("div");
 	h.className = "item-buttons";
 	var v = document.createElement("div");
-	v.className = "item-toggle", v.addEventListener("onclick", new Function("toggleExtension(this, '" + n.id + "');toggle(this)")), v.addEventListener("onmousedown", new Function("togglePress(this, 'down')")), v.addEventListener("onmouseup", new Function("togglePress(this, 'up')")), n.enabled || v.setAttribute("unchecked", "");
+	v.className = "item-toggle", v.addEventListener("click", new Function("toggleExtension(this, '" + n.id + "');toggle(this)")), v.addEventListener("mousedown", new Function("togglePress(this, 'down')")), v.addEventListener("mouseup", new Function("togglePress(this, 'up')")), n.enabled || v.setAttribute("unchecked", "");
 	var x = document.createElement("div");
 	x.className = "item-bar";
 	var u = document.createElement("div");

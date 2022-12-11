@@ -82,12 +82,16 @@ function addExtension(n) {
 	h.className = "item-buttons";
 	var v = document.createElement("div");
 	v.className = "item-toggle";
-    v.addEventListener("click", () => {
-        toggleExtension(this, n.id);
-        toggle(this);
+    v.addEventListener("click", ev => {
+        toggleExtension(ev.target, n.id);
+        toggle(ev.target);
     });
-    v.addEventListener("mousedown", new Function("togglePress(this, 'down')"));
-    v.addEventListener("mouseup", new Function("togglePress(this, 'up')"));
+    v.addEventListener("mousedown", ev => {
+        togglePress(ev.target, 'down');
+    });
+    v.addEventListener("mouseup", ev => {
+        togglePress(ev.target, 'up');
+    });
     n.enabled || v.setAttribute("unchecked", "");
 	var x = document.createElement("div");
 	x.className = "item-bar";

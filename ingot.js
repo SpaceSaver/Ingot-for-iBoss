@@ -795,7 +795,7 @@ async function getExtensions() {
         description: "Disables iBoss proxy and kills background page when turned off.",
         logo: "",
         managed: false,
-        enabled: proxyEnabled(),
+        enabled: await proxyEnabled(),
         togglehandle: toggleProxy
     });
 }

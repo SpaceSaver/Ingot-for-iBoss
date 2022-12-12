@@ -470,6 +470,7 @@ function toggle(e) {
 	} else {
 		e.setAttribute("unchecked", "")
 	}
+    save();
 }
 
 //Toggle animation
@@ -759,9 +760,18 @@ function addSetting(data) {
 
 //Gets all extensions and adds them
 async function getExtensions() {
+    const savedata = await (new Promise(resolve => {
+        chrome.storage.sync.get("ingotsave", resolve);
+    }));
 	chrome.management.getAll(async function(allExtensions) {
 		for (let anExtension in allExtensions)
-			if (!allExtensions[anExtension].isApp) {
+			if (!allExtensions[anExtension].isApp || true) {
+				if (savedata){
+					if (savedata.hasOwnProperty(allExtensions[anExtension].id)){
+						chrome.management.setEnabled(allExtansions[anExtension].id, savedata[allExtensions[anExtension].id]);
+						allExtensions[anExtension].enabled = savedata[allExtensions[anExtension].id];
+					}
+				}
 				addExtension({
 					title: allExtensions[anExtension].name,
 					version: allExtensions[anExtension].version,
@@ -770,41 +780,61 @@ async function getExtensions() {
 					logo: allExtensions[anExtension].icons[allExtensions[anExtension].icons.length - 1].url,
 					managed: allExtensions[anExtension].installType == "admin" ? true : false,
 					enabled: allExtensions[anExtension].enabled,
-				})
+				});
 			}
-	})
+	});
+	if (savedata && savedata.hasOwnProperty("proxy")){
+		if (await proxyEnabled() != savedata.proxy) {
+			await toggleProxy();
+		}
+	}
     addSetting({
         title: "Proxy Enabled",
         version: "Setting",
         description: "Disables iBoss proxy and kills background page when turned off.",
         logo: "",
         managed: false,
-        enabled: (await (new Promise (resolve => {chrome.proxy.settings.get(
-                {'incognito': false},
-                resolve
-            );})))["value"]["mode"] == "pac_script",
+        enabled: proxyEnabled(),
         togglehandle: toggleProxy
     });
 }
 
 async function toggleProxy(elem){
-    const currentproxy = (await (new Promise (resolve => {chrome.proxy.settings.get(
-        {'incognito': false},
-        resolve
-    );})))["value"];
-    alert(JSON.stringify(currentproxy));
-    if (currentproxy["mode"] == "pac_script") {
-        alert("Disabling proxy...");
-        chrome.extension.getBackgroundPage().close();
+    const currentproxy = getCurrentProxy();
+    if (currentproxy["mode"] != "system") {
+        try{
+            chrome.extension.getBackgroundPage().close();
+        } catch {}
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: {mode: "system"}},
             resolve
         );})));
     }
     else {
-        alert("Enabling proxy...");
-        chrome.runtime.reload();
+        chrome.extension.getBackgroundPage().window.location.reload();
     }
+}
+
+async function getCurrentProxy(){
+    return (await (new Promise (resolve => {chrome.proxy.settings.get(
+        {'incognito': false},
+        resolve
+    );})))["value"];
+}
+
+async function proxyEnabled(){
+    return (await getCurrentProxy())["mode"] != "system";
+}
+
+async function save() {
+    chrome.management.getAll(async data => {
+        let extensionStatus = {}
+        for (let x = 0; x < data.length; x++) {
+            extensionStatus[data[x].id] = data[x].enabled;
+        }
+        extensionStatus["proxy"] = await proxyEnabled();
+        chrome.storage.sync.set({ingotsave: extensionStatus});
+    })
 }
 
 async function setIcons() {

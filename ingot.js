@@ -812,8 +812,8 @@ async function toggleProxy(elem){
         );})));
     }
     else {
-        chrome.extension.getBackgroundPage().window.location.reload();
-		// chrome.runtime.reload()
+        // chrome.extension.getBackgroundPage().window.location.reload();
+		chrome.runtime.reload()
     }
 }
 

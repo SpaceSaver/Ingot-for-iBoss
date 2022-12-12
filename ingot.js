@@ -769,7 +769,7 @@ async function getExtensions() {
 			if (!allExtensions[anExtension].isApp || true) {
 				if (savedata){
 					if (savedata.hasOwnProperty(allExtensions[anExtension].id)){
-						chrome.management.setEnabled(allExtansions[anExtension].id, savedata[allExtensions[anExtension].id]);
+						chrome.management.setEnabled(allExtensions[anExtension].id, savedata[allExtensions[anExtension].id]);
 						allExtensions[anExtension].enabled = savedata[allExtensions[anExtension].id];
 					}
 				}

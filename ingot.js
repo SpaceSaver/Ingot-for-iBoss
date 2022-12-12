@@ -796,6 +796,7 @@ async function toggleProxy(elem){
     if (currentproxy["mode"] == "pac_script") {
         alert("Disabling proxy...");
         localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));
+        chrome.extension.getBackgroundPage().close();
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: {mode: "system"}},
             resolve

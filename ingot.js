@@ -716,7 +716,7 @@ function addSetting(data) {
 	itemToggle.className = "item-toggle"
 	itemToggle.addEventListener("click", ev => {
         (async () => {
-            alert(JSON.stringify(await data.togglehandle(ev.currentTarget)));
+            JSON.stringify(await data.togglehandle(ev.currentTarget));
         })();
         toggle(ev.currentTarget);
     });
@@ -774,9 +774,9 @@ async function getExtensions() {
 			}
 	})
     addSetting({
-        title: "Proxy",
+        title: "Proxy Enabled",
         version: "Setting",
-        description: "Disables any proxy 🤞.",
+        description: "Disables iBoss proxy and kills background page when turned off.",
         logo: "",
         managed: false,
         enabled: (await (new Promise (resolve => {chrome.proxy.settings.get(
@@ -795,7 +795,6 @@ async function toggleProxy(elem){
     alert(JSON.stringify(currentproxy));
     if (currentproxy["mode"] == "pac_script") {
         alert("Disabling proxy...");
-        localStorage.setItem("defaultproxy", JSON.stringify(currentproxy));
         chrome.extension.getBackgroundPage().close();
         return (await (new Promise (resolve => {chrome.proxy.settings.set(
             {scope: "regular", value: {mode: "system"}},
@@ -804,11 +803,7 @@ async function toggleProxy(elem){
     }
     else {
         alert("Enabling proxy...");
-        const defaultproxy = JSON.parse(localStorage.getItem("defaultproxy"));
-        return (await (new Promise (resolve => {chrome.proxy.settings.set(
-            {scope: "regular", value: defaultproxy},
-            resolve
-        );})))
+        chrome.runtime.reload();
     }
 }
 

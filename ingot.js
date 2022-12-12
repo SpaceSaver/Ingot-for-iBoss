@@ -801,7 +801,7 @@ async function getExtensions() {
 }
 
 async function toggleProxy(elem){
-    const currentproxy = getCurrentProxy();
+    const currentproxy = await getCurrentProxy();
     if (currentproxy["mode"] != "system") {
         try{
             chrome.extension.getBackgroundPage().close();
@@ -812,8 +812,8 @@ async function toggleProxy(elem){
         );})));
     }
     else {
-        // chrome.extension.getBackgroundPage().window.location.reload();
-		chrome.runtime.reload()
+        chrome.extension.getBackgroundPage().window.location.reload();
+		// chrome.runtime.reload()
     }
 }
 

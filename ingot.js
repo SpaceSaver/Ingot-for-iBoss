@@ -760,9 +760,9 @@ function addSetting(data) {
 
 //Gets all extensions and adds them
 async function getExtensions() {
-    const savedata = await (new Promise(resolve => {
+    const savedata = (await (new Promise(resolve => {
         chrome.storage.sync.get("ingotsave", resolve);
-    }));
+    })))["ingotsave"];
 	console.log(savedata);
 	chrome.management.getAll(async function(allExtensions) {
 		for (let anExtension in allExtensions)

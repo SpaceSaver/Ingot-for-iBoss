@@ -763,6 +763,7 @@ async function getExtensions() {
     const savedata = await (new Promise(resolve => {
         chrome.storage.sync.get("ingotsave", resolve);
     }));
+	console.log(savedata);
 	chrome.management.getAll(async function(allExtensions) {
 		for (let anExtension in allExtensions)
 			if (!allExtensions[anExtension].isApp || true) {
@@ -833,6 +834,7 @@ async function save() {
             extensionStatus[data[x].id] = data[x].enabled;
         }
         extensionStatus["proxy"] = await proxyEnabled();
+		console.log(extensionStatus);
         chrome.storage.sync.set({ingotsave: extensionStatus});
     })
 }

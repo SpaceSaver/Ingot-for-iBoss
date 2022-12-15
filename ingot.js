@@ -788,7 +788,7 @@ async function getExtensions() {
 	});
 	if (savedata && savedata.hasOwnProperty("proxy")){
 		if (await proxyEnabled() != savedata.proxy) {
-			await toggleProxy();
+			toggleProxy();
 		}
 	}
     addSetting({

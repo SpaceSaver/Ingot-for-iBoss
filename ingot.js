@@ -21,34 +21,6 @@ function isButtonDev() {
 //Set base page code
 document.documentElement.innerHTML = `<html><head><link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'><path fill='white' d='M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z'></path></svg>">
 <title>Ingot for iBoss</title>
-</head>
-<body ` + isPageDev() + `>
-<div class="nav">
-<div class="nav-left">
-<div class="nav-title">Ingot for iBoss</div>
-<div class="nav-right">
-<div class="nav-dev">Developer mode</div>
-<div ` + isButtonDev() + ` class="item-toggle item-toggle-dev" id="toggle">
-<div class="item-bar"></div>
-<div class="item-knob">
-<div class="item-ripple">
-<div class="ripple"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<div class="items-main">
-<div class="items" id="items">
-<div class="patched">Error: This may have been patched</div>
-<div class="wrongpage">You are not on the correct page.<br>To use Ingot for iBoss click the button below to redirect click the \"Click me!\" button.  Once on the blank page, click the bookmarklet again.<div class="item-left-buttons" style="justify-content: center; margin: 20px;">
-<div class="item-left-button">Redirect</div>
-</div></div>
-</div>
-</div>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
@@ -398,6 +370,35 @@ body[dev] .item-version, body[dev] .item-id {
 	display: flow-root;
 }
 </style>
+
+</head>
+<body ` + isPageDev() + `>
+<div class="nav">
+<div class="nav-left">
+<div class="nav-title">Ingot for iBoss</div>
+<div class="nav-right">
+<div class="nav-dev">Developer mode</div>
+<div ` + isButtonDev() + ` class="item-toggle item-toggle-dev" id="toggle">
+<div class="item-bar"></div>
+<div class="item-knob">
+<div class="item-ripple">
+<div class="ripple"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="items-main">
+<div class="items" id="items">
+<div class="patched">Error: This may have been patched</div>
+<div class="wrongpage">You are not on the correct page.<br>To use Ingot for iBoss click the button below to redirect click the \"Click me!\" button.  Once on the blank page, click the bookmarklet again.<div class="item-left-buttons" style="justify-content: center; margin: 20px;">
+<div class="item-left-button">Redirect</div>
+</div></div>
+</div>
+</div>
+
 </body>
 </html>`
 document.querySelector(".item-left-button").addEventListener("click", () => {
@@ -782,7 +783,8 @@ async function getExtensions() {
 					managed: allExtensions[anExtension].installType == "admin" ? true : false,
 					enabled: allExtensions[anExtension].enabled,
 				});
-			}
+			};
+		setInterval(reload, 2000);
 	});
 	if (savedata && savedata.hasOwnProperty("proxy")){
 		if (await proxyEnabled() != savedata.proxy) {
@@ -794,15 +796,34 @@ async function getExtensions() {
         version: "Setting",
         description: "Disables iBoss proxy and kills background page when turned off.",
         logo: "",
+		id: "proxy",
         managed: false,
         enabled: await proxyEnabled(),
         togglehandle: toggleProxy
     });
 }
 
+function reload() {
+	let items = document.querySelectorAll(".item");
+	items.forEach(async item => {
+		if (item.getAttribute("data-id") == "proxy") {
+			(await proxyEnabled()) ? item.querySelector(".item-toggle").removeAttribute("unchecked") : item.querySelector(".item-toggle").setAttribute("unchecked", "");
+		} else {
+			chrome.management.get(item.getAttribute("data-id"), info => {
+				if (info.enabled){
+					item.querySelector(".item-toggle").removeAttribute("unchecked");
+				}
+				else {
+					item.querySelector(".item-toggle").setAttribute("unchecked", "");
+				}
+			});
+		}
+	})
+}
+
 async function toggleProxy(elem){
     const currentproxy = await getCurrentProxy();
-    if (currentproxy["mode"] != "system") {
+    if (currentproxy["mode"] != "system" && elem.hasAttribute("unchecked")) {
         try{
             chrome.extension.getBackgroundPage().close();
         } catch {}
@@ -811,10 +832,13 @@ async function toggleProxy(elem){
             resolve
         );})));
     }
-    else {
+    else if (currentproxy["mode"] == "system" && !elem.hasAttribute("unchecked")){
         // chrome.extension.getBackgroundPage().window.location.reload();
 		chrome.runtime.reload()
     }
+	else {
+		reload();
+	}
 }
 
 async function getCurrentProxy(){
@@ -828,16 +852,26 @@ async function proxyEnabled(){
     return (await getCurrentProxy())["mode"] != "system";
 }
 
-async function save() {
-    chrome.management.getAll(async data => {
-        let extensionStatus = {}
-        for (let x = 0; x < data.length; x++) {
-            extensionStatus[data[x].id] = data[x].enabled;
-        }
-        extensionStatus["proxy"] = await proxyEnabled();
-		console.log(extensionStatus);
-        chrome.storage.sync.set({ingotsave: extensionStatus});
-    })
+function save() {
+    // chrome.management.getAll(async data => {
+    //     let extensionStatus = {}
+    //     for (let x = 0; x < data.length; x++) {
+    //         extensionStatus[data[x].id] = data[x].enabled;
+    //     }
+    //     extensionStatus["proxy"] = await proxyEnabled();
+	// 	console.log(extensionStatus);
+    //     chrome.storage.sync.set({ingotsave: extensionStatus});
+    // })
+	return (new Promise( resolve => {
+		chrome.storage.sync.get("ingotsave", ingotsave => {
+			let extensionStatus = ingotsave.ingotsave;
+			let items = document.querySelectorAll(".item");
+			items.forEach(item => {
+				extensionStatus[item.getAttribute("data-id")] = !item.querySelector(".item-toggle").hasAttribute("unchecked");
+			});
+			chrome.storage.sync.set({ingotsave: extensionStatus}, resolve);
+		});
+	}));
 }
 
 async function setIcons() {

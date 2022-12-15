@@ -1,75 +1,123 @@
-<title>Ingot</title>
+<!DOCTYPE html>
+<html>
 
-<div class="title">Ingot for iBoss</div>
+<head>
+	<title>Ingot for iBoss</title>
+	<meta charset="UTF-8">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
-<div class="button" >Launch Ingot for iBoss<a href="javascript:(function () {var a = document.createElement('script');a.src = 'https://cdn.jsdelivr.net/gh/FogNetwork/Ingot@latest/ingot.min.js';document.body.appendChild(a);}())" class="button-text">Ingot</a></div>
-<div class="button-note">Drag the button to your bookmarks bar for easy access</div>
+		* {
+			font-family: "Roboto";
+		}
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+		:root {
+			color-scheme: dark;
+		}
 
-* {
-	font-family: "Roboto";
-}
+		body {
+			background: #202124;
+			margin: 0;
+			padding: 0;
+		}
 
-:root {
-	color-scheme: dark;
-}
+		.title {
+			text-align: center;
+			font-size: 50px;
+			margin: 20px;
+			margin-bottom: 50px;
+			user-select: none;
+			font-weight: 500;
+		}
 
-body {
-	background: #202124;
-	margin: 0;
-	padding: 0;
-}
+		.button {
+			position: relative;
+			width: 270px;
+			height: 47px;
+			border: 1px solid rgb(95, 99, 104);
+			color: rgb(138, 255, 150);
+			background: rgba(100, 200, 75, 0.08);
+			border-radius: 6px;
+			margin: 20px auto;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 24px;
+			user-select: none;
+			font-weight: 500;
+		}
 
-.title {
-	text-align: center;
-	font-size: 50px;
-	margin: 20px;
-	margin-bottom: 50px;
-	user-select: none;
-    font-weight: 500;
-}
+		.button:active {
+			background: rgba(100, 200, 75, 0.25);
+		}
 
-.button {
-	position: relative;
-	width: 230px;
-	height: 47px;
-	border: 1px solid rgb(95, 99, 104);
-	color: rgb(138, 180, 248);
-	background: rgba(138, 180, 248, 0.08);
-	border-radius: 6px;
-	margin: 20px auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 24px;
-	user-select: none;
-        font-weight: 500;
-}
+		.button-text {
+			opacity: 0;
+			user-select: none;
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+		}
 
-.button:active {
-	background: rgba(100, 200, 75, 0.25);
-}
+		.button-note {
+			margin: 0 auto;
+			text-align: center;
+			color: rgb(101, 233, 83);
+			width: 300px;
+			user-select: none;
+		}
 
-.button-text {
-	opacity: 0;
-	user-select: none;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	height: 100%;
-	width: 100%;
-}
+		body[unpaid] .premium {
+			display: none;
+		}
 
-.button-note {
-	margin: 0 auto;
-	text-align: center;
-	color: rgb(138, 180, 248);
-	width: 300px;
-	user-select: none;
-}
-</style>
+		body[unpaid] #hcaptcha{
+			display: block;
+		}
+
+		#hcaptcha {
+			display: none;
+			background-color: black;
+		}
+
+		.no-selection {
+			background-color: black;
+		}
+	</style>
+	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+
+<body unpaid>
+
+	<div class="title">Ingot for iBoss</div>
+
+	<div class="button premium">Launch Ingot for iBoss<a
+			href="javascript:%28async%20function%28%29%7Beval%28await%28await%20fetch%28%22https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FSpaceSaver%2FIngot-for-iBoss%40latest%2Fingot.js%22%29%29.text%28%29%29%7D%29%28%29%3B"
+			class="button-text">Ingot for iBoss</a></div>
+	<div class="button-note premium">Drag the button to your bookmarks bar and then run on any page.</div>
+	<div id="hcaptcha" class="button-note"></div>
+	<script>
+		window.addEventListener('load', () => {
+			function hcallback (data){
+				document.body.removeAttribute("unpaid");
+			}
+			hcaptcha.render('hcaptcha', {
+				sitekey: '498dd68e-8acb-4969-885e-e8f4b94e9efc',
+				theme: 'dark',
+				callback: hcallback
+			});
+	});
+	</script>
+	<br>
+	<div class="button-note">Credits to FogNetwork for the original Ingot which I took most of the code from. <a
+			href="https://github.com/FogNetwork/Ingot" target="_blank">Original Ingot repository.</a></div>
+
+	
+</body>
+
+</html>

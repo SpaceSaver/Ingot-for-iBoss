@@ -93,10 +93,14 @@
 
 	<div class="button premium">Launch Ingot for iBoss<a
 			href="javascript:%28async%20function%28%29%7Beval%28await%28await%20fetch%28%22https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FSpaceSaver%2FIngot-for-iBoss%40latest%2Fingot.js%22%29%29.text%28%29%29%7D%29%28%29%3B"
-			class="button-text">Ingot for iBoss</a></div>
-	<div class="button-note premium">Drag the button to your bookmarks bar and then run on any page.</div>
+			class="button-text" id="ingotbutton">Ingot for iBoss</a></div>
+	<div class="button-note premium">Drag the button to your bookmarks bar and then run on any page besides internal chrome pages (like the "new tab" page).</div>
 	<div id="hcaptcha" class="button-note"></div>
 	<script>
+		document.querySelector("#ingotbutton").addEventListener("click", ev => {
+			ev.preventDefault();
+			alert("Don't click it, drag it to your bookmarks bar!");
+		})
 		window.addEventListener('load', () => {
 			function hcallback (data){
 				console.log(hcaptcha.getResponse(captcha))

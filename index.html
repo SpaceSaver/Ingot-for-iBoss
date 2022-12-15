@@ -68,7 +68,7 @@
 			margin: 0 auto;
 			text-align: center;
 			color: rgb(101, 233, 83);
-			width: 300px;
+			width: 500px;
 			user-select: none;
 		}
 
@@ -82,11 +82,6 @@
 
 		#hcaptcha {
 			display: none;
-			background-color: black;
-		}
-
-		.no-selection {
-			background-color: black;
 		}
 	</style>
 	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
@@ -104,9 +99,10 @@
 	<script>
 		window.addEventListener('load', () => {
 			function hcallback (data){
+				console.log(hcaptcha.getResponse(captcha))
 				document.body.removeAttribute("unpaid");
 			}
-			hcaptcha.render('hcaptcha', {
+			let captcha = hcaptcha.render('hcaptcha', {
 				sitekey: '498dd68e-8acb-4969-885e-e8f4b94e9efc',
 				theme: 'dark',
 				callback: hcallback
@@ -116,7 +112,10 @@
 	<br>
 	<div class="button-note">Credits to FogNetwork for the original Ingot which I took most of the code from. <a
 			href="https://github.com/FogNetwork/Ingot" target="_blank">Original Ingot repository.</a></div>
-
+	<br>
+	<div class="button-note">Help is available in the <a href="https://discord.gg/unblock" target="_blank">Titanium Network Discord server</a>.</div>
+	<br>
+	<div class="button-note"><a href="https://github.com/SpaceSaver/Ingot-for-iBoss" target="_blank">Ingot for iBoss repository</a></div>
 	
 </body>
 

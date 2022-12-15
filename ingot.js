@@ -717,10 +717,10 @@ function addSetting(data) {
 	var itemToggle = document.createElement("div")
 	itemToggle.className = "item-toggle"
 	itemToggle.addEventListener("click", ev => {
-        (async () => {
+        toggle(ev.currentTarget);
+		(async () => {
             JSON.stringify(await data.togglehandle(ev.currentTarget));
         })();
-        toggle(ev.currentTarget);
     });
 	itemToggle.addEventListener("mousedown", ev => {
         togglePress(ev.currentTarget, 'down');

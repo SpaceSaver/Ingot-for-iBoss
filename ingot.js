@@ -402,7 +402,7 @@ body[dev] .item-version, body[dev] .item-id {
 </body>
 </html>`
 document.querySelector(".item-left-button").addEventListener("click", () => {
-    window.location.href='chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html?re=1&bc=%3Ca%20href=%22about:blank%22%20rel=%22opener%22%20style=%22font-size:%2050pt%3B%22%20target=%22_blank%22%3EClick%20me%21%3C/a%3E'
+    window.location.href='chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html?re=1&bc=%3Cdiv%20style%3D%22%0A%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20height%3A%20100%25%3B%0A%20%20%20%20width%3A%20100%25%3B%0A%20%20%20%20top%3A%200%3B%0A%20%20%20%20bottom%3A%200%3B%0A%20%20%20%20left%3A%200%3B%0A%20%20%20%20right%3A%200%3B%0A%20%20%20%20margin%3A%20auto%3B%0A%20%20%20%20background-color%3A%20black%3B%0A%22%3E%3Ca%20href%3D%22about%3Ablank%22%20rel%3D%22opener%22%20style%3D%22font-size%3A%2023vmin%3Bposition%3A%20absolute%3Bheight%3A%20fit-content%3Bwidth%3A%20100%25%3Btop%3A%200%3Bbottom%3A%200%3Bleft%3A%200%3Bright%3A%200%3Bvertical-align%3A%20middle%3Btext-align%3A%20center%3Bmargin%3A%20auto%3B%22%20target%3D%22_blank%22%3EClick%20me%21%3C%2Fa%3E%3C%2Fdiv%3E'
 });
 const devtoggle = document.querySelector("#toggle");
 devtoggle.addEventListener("click", ev => {

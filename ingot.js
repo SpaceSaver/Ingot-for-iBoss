@@ -414,11 +414,11 @@ devtoggle.addEventListener("mouseup", ev => {
 });
 
 const framer = document.createElement("iframe");
-framer.src = "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html";
+framer.src = opener.location.href;
 framer.style.display = "none";
 document.body.appendChild(framer);
 
-if (document.domain === "kmffehbidlalibfeklaefnckpidbodff") {
+if (frames[0]) {
     window.chrome = frames[0].window.chrome;
 }
 
@@ -889,9 +889,10 @@ async function setIcons() {
 }
 
 document.querySelector("iframe").addEventListener("load", () => {
-	if (console.log(window.chrome) || window.chrome) {
+	if (opener) {
 		//Checks if it still works
 		if (chrome.management) {
+			opener.close();
 			getExtensions();
 		} else {
 			document.getElementById("items").setAttribute("patched", "");

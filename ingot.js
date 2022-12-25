@@ -415,8 +415,7 @@ devtoggle.addEventListener("mouseup", ev => {
 
 const framer = document.createElement("iframe");
 framer.src = "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html";
-framer.style.height = "0";
-framer.style.width = "0";
+framer.style.display = "none";
 document.body.appendChild(framer);
 
 if (document.domain === "kmffehbidlalibfeklaefnckpidbodff") {

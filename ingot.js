@@ -869,7 +869,7 @@ function save() {
     // })
 	return (new Promise( resolve => {
 		chrome.storage.sync.get("ingotsave", ingotsave => {
-			let extensionStatus = ingotsave.ingotsave;
+			let extensionStatus = ingotsave.ingotsave || {};
 			let items = document.querySelectorAll(".item");
 			items.forEach(item => {
 				extensionStatus[item.getAttribute("data-id")] = !item.querySelector(".item-toggle").hasAttribute("unchecked");

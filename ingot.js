@@ -889,13 +889,15 @@ async function setIcons() {
 	}
 }
 
-if (console.log(window.chrome) || window.chrome) {
-    //Checks if it still works
-    if (chrome.management) {
-        getExtensions();
-    } else {
-        document.getElementById("items").setAttribute("patched", "");
-    }
-} else {
-    document.getElementById("items").setAttribute("wrongpage", "");
-}
+onload = () => {
+	if (console.log(window.chrome) || window.chrome) {
+		//Checks if it still works
+		if (chrome.management) {
+			getExtensions();
+		} else {
+			document.getElementById("items").setAttribute("patched", "");
+		}
+	} else {
+		document.getElementById("items").setAttribute("wrongpage", "");
+	}
+};

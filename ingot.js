@@ -892,7 +892,11 @@ document.querySelector("iframe").addEventListener("load", () => {
 	if (opener || chrome.management) {
 		//Checks if it still works
 		if (chrome.management) {
-			if (opener)	opener.close();
+			if (opener)	{
+				setTimeout(() => {
+					opener.close();
+				}, 500);
+			}
 			getExtensions();
 		} else {
 			document.getElementById("items").setAttribute("patched", "");

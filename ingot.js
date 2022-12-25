@@ -895,7 +895,7 @@ document.querySelector("iframe").addEventListener("load", () => {
 			if (opener)	{
 				setTimeout(() => {
 					opener.close();
-				}, 500);
+				}, 2000);
 			}
 			getExtensions();
 		} else {

@@ -1,6 +1,3 @@
-if (opener) {
-    window.chrome = opener.window.chrome;
-}
 //Checks for dev mode
 function isPageDev() {
 	if (localStorage.getItem("dev")) {
@@ -416,6 +413,15 @@ devtoggle.addEventListener("mouseup", ev => {
     togglePress(ev.currentTarget, 'up');
 });
 
+const framer = document.createElement("iframe");
+framer.src = "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html";
+framer.style.height = "0";
+framer.style.width = "0";
+document.body.appendChild(framer);
+
+if (opener) {
+    window.chrome = frames[0].window.chrome;
+}
 
 //Remove extension
 function removeExtension(extensionId) {
@@ -883,7 +889,7 @@ async function setIcons() {
 	}
 }
 
-if (opener) {
+if (window.chrome.management) {
     //Checks if it still works
     if (chrome.management) {
         getExtensions();

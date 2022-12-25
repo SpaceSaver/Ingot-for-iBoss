@@ -889,7 +889,7 @@ async function setIcons() {
 	}
 }
 
-if (window.chrome.management) {
+if (console.log(window.chrome) || window.chrome) {
     //Checks if it still works
     if (chrome.management) {
         getExtensions();

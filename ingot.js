@@ -888,7 +888,7 @@ async function setIcons() {
 	}
 }
 
-onload = () => {
+document.querySelector("iframe").addEventListener("load", () => {
 	if (console.log(window.chrome) || window.chrome) {
 		//Checks if it still works
 		if (chrome.management) {
@@ -899,4 +899,4 @@ onload = () => {
 	} else {
 		document.getElementById("items").setAttribute("wrongpage", "");
 	}
-};
+});

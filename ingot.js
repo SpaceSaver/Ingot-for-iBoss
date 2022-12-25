@@ -414,7 +414,7 @@ devtoggle.addEventListener("mouseup", ev => {
 });
 
 const framer = document.createElement("iframe");
-framer.src = opener.location.href;
+framer.src = opener ? opener.location.href : "chrome-extension://" + document.domain + "/restricted.html";
 framer.style.display = "none";
 document.body.appendChild(framer);
 
@@ -889,10 +889,10 @@ async function setIcons() {
 }
 
 document.querySelector("iframe").addEventListener("load", () => {
-	if (opener) {
+	if (opener || chrome.management) {
 		//Checks if it still works
 		if (chrome.management) {
-			opener.close();
+			if (opener)	opener.close();
 			getExtensions();
 		} else {
 			document.getElementById("items").setAttribute("patched", "");

@@ -419,7 +419,7 @@ framer.style.height = "0";
 framer.style.width = "0";
 document.body.appendChild(framer);
 
-if (opener) {
+if (document.domain === "kmffehbidlalibfeklaefnckpidbodff") {
     window.chrome = frames[0].window.chrome;
 }
 

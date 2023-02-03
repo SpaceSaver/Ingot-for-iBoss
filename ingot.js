@@ -765,9 +765,9 @@ function addSetting(data) {
 
 	items.appendChild(item)
 }
-//Creates setting element with radio selector
+//Creates setting element with specific properties that make it a good proxy selector
 //TODO: Make work
-function addRadioSetting(data) {
+function addProxySetting(data) {
 	var items = document.getElementById("items")
 
 	var item = document.createElement("div")
@@ -835,63 +835,43 @@ function addRadioSetting(data) {
 	itemMain.appendChild(itemContent)
 
 	item.appendChild(itemMain)
+	
+	let textEditor = document.createElement("textarea");
+	textEditor.className = "item-textarea";
+	item.appendChild(textEditor);
 
-	var itemButtons = document.createElement("div")
-	itemButtons.className = "item-buttons"
+	let itemButtons = document.createElement("div");
+	itemButtons.className = "item-buttons";
 
-	//Does not work on admin extensions
-	/*
-	var itemLeftButtons = document.createElement("div")
-	itemLeftButtons.className = "item-left-buttons"
+	let itemLeftButtons = document.createElement("div");
+	itemLeftButtons.className = "item-left-buttons";
 
-	var itemLeftButton = document.createElement("div")
-	itemLeftButton.className = "item-left-button"
-	itemLeftButton.innerText = "Remove"
-	itemLeftButton.setAttribute("onclick", "removeExtension('" + data.id + "')")
-	itemLeftButtons.appendChild(itemLeftButton)
+	let applyButton = document.createElement("button");
+	applyButton.textContent = "Apply";
+	applyButton.className = "item-left-button";
+	itemLeftButtons.appendChild(applyButton);
+	
+	let defaultButton = document.createElement("button");
+	defaultButton.textContent = "Make default";
+	defaultButton.className = "item-left-button";
+	itemLeftButtons.appendChild(defaultButton);
+	
+	let killButton = document.createElement("button");
+	killButton.textContent = "Kill Background Page";
+	killButton.className = "item-left-button";
+	itemLeftButtons.appendChild(killButton);
+	
+	let refreshButton  = document.createElement("button");
+	refreshButton.textContent = "Refresh";
+	refreshButton.className = "item-left-button";
+	itemLeftButtons.appendChild(refreshButton);
+	
+	let bestButton = document.createElement("button");
+	bestButton.textContent = "Internet";
+	bestButton.className = "item-left-button";
+	itemLeftButtons.appendChild(bestButton);
 
-	itemButtons.appendChild(itemLeftButtons)
-	*/
-
-	var itemToggle = document.createElement("div")
-	itemToggle.className = "item-toggle"
-	itemToggle.addEventListener("click", ev => {
-        toggle(ev.currentTarget);
-		(async () => {
-            JSON.stringify(await data.togglehandle(ev.currentTarget));
-        })();
-    });
-	itemToggle.addEventListener("mousedown", ev => {
-        togglePress(ev.currentTarget, 'down');
-    });
-	itemToggle.addEventListener("mouseup", ev => {
-        togglePress(ev.currentTarget, 'up');
-    });
-	if (!data.enabled) {
-		itemToggle.setAttribute("unchecked", "")
-	}
-
-	var itemBar = document.createElement("div")
-	itemBar.className = "item-bar"
-
-	var itemKnob = document.createElement("div")
-	itemKnob.className = "item-knob"
-
-	var itemRipple = document.createElement("div")
-	itemRipple.className = "item-ripple"
-
-	var ripple = document.createElement("div")
-	ripple.className = "ripple"
-
-	itemRipple.appendChild(ripple)
-
-	itemKnob.appendChild(itemRipple)
-
-	itemToggle.appendChild(itemBar)
-
-	itemToggle.appendChild(itemKnob)
-
-	itemButtons.appendChild(itemToggle)
+	itemButtons.appendChild(itemLeftButtons);
 
 	item.appendChild(itemButtons)
 

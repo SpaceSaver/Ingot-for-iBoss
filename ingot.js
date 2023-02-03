@@ -768,6 +768,9 @@ function addSetting(data) {
 //Creates setting element with specific properties that make it a good proxy selector
 //TODO: Make work
 function addProxySetting(data) {
+	data = {
+		title: "Real Proxy"
+	}
 	var items = document.getElementById("items")
 
 	var item = document.createElement("div")
@@ -919,6 +922,7 @@ async function getExtensions() {
         enabled: await proxyEnabled(),
         togglehandle: toggleProxy
     });
+	addProxySetting({});
 }
 
 function reload() {

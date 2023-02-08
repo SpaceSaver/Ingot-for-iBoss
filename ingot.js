@@ -880,7 +880,7 @@ function addProxySetting(data) {
 	refreshButton.className = "item-left-button";
 	refreshButton.addEventListener("click", () => {
 		chrome.proxy.settings.get({'incognito': false}, response => {
-			textEditor.valuse = JSON.stringify(response['value']);
+			textEditor.value = JSON.stringify(response['value']);
 		});
 	});
 	itemLeftButtons.appendChild(refreshButton);

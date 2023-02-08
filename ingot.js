@@ -826,6 +826,7 @@ function addProxySetting(data) {
 	
 	let textEditor = document.createElement("textarea");
 	textEditor.className = "item-textarea";
+	
 	itemContent.appendChild(textEditor);
 
 	itemMain.appendChild(itemContent)

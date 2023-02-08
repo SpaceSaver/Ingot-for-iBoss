@@ -818,20 +818,30 @@ function addProxySetting(data) {
 
 	itemContent.appendChild(itemTitleAndVersion)
 
+	var itemDescriptionOverflow = document.createElement("div")
+	itemDescriptionOverflow.className = "item-description-overflow"
+
+	var itemDescription = document.createElement("div")
+	itemDescription.className = "item-description"
+	itemDescription.innerText = data.description
+
+	itemDescriptionOverflow.appendChild(itemDescription)
+
+	itemContent.appendChild(itemDescriptionOverflow)
+
 	var itemId = document.createElement("div")
 	itemId.className = "item-id"
 	itemId.innerText = "ID: " + data.id
 
 	itemContent.appendChild(itemId)
-	
-	let textEditor = document.createElement("textarea");
-	textEditor.className = "item-textarea";
-	
-	itemContent.appendChild(textEditor);
 
 	itemMain.appendChild(itemContent)
 
 	item.appendChild(itemMain)
+	
+	let textEditor = document.createElement("textarea");
+	textEditor.className = "item-textarea";
+	item.appendChild(textEditor);
 
 	let itemButtons = document.createElement("div");
 	itemButtons.className = "item-buttons";
@@ -862,7 +872,6 @@ function addProxySetting(data) {
 	let bestButton = document.createElement("button");
 	bestButton.textContent = "Internet";
 	bestButton.className = "item-left-button";
-	bestButton.
 	itemLeftButtons.appendChild(bestButton);
 
 	itemButtons.appendChild(itemLeftButtons);

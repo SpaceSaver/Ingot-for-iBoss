@@ -896,6 +896,10 @@ function addProxySetting(data) {
 					scheme: "socks5",
 					host: "1.2.3.4"
 				},
+				proxyForHttps: {
+					scheme: "socks5",
+					host: "1.2.3.4"
+				},
 				bypassList: ["foobar.com"]
 			}
 		});

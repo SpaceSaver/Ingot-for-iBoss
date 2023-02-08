@@ -852,26 +852,54 @@ function addProxySetting(data) {
 	let applyButton = document.createElement("button");
 	applyButton.textContent = "Apply";
 	applyButton.className = "item-left-button";
+	applyButton.addEventListener("click", () => {
+		chrome.proxy.settings.set({value: JSON.parse(textEditor.value), scope: 'regular'}, data => alert(JSON.stringify(data)));
+	});
 	itemLeftButtons.appendChild(applyButton);
 	
 	let defaultButton = document.createElement("button");
 	defaultButton.textContent = "Make default";
 	defaultButton.className = "item-left-button";
+	defaultButton.disabled = true;
 	itemLeftButtons.appendChild(defaultButton);
 	
 	let killButton = document.createElement("button");
 	killButton.textContent = "Kill Background Page";
 	killButton.className = "item-left-button";
+	killButton.addEventListener("click", () => {
+		try{
+            chrome.extension.getBackgroundPage().close();
+        } catch {
+			alert("An error ocurred when killing background page.");
+		}
+	});
 	itemLeftButtons.appendChild(killButton);
 	
 	let refreshButton  = document.createElement("button");
 	refreshButton.textContent = "Refresh";
 	refreshButton.className = "item-left-button";
+	refreshButton.addEventListener("click", () => {
+		chrome.proxy.settings.get({'incognito': false}, response => {
+			textEditor.valuse = JSON.stringify(response['value']);
+		});
+	});
 	itemLeftButtons.appendChild(refreshButton);
 	
 	let bestButton = document.createElement("button");
 	bestButton.textContent = "Internet";
 	bestButton.className = "item-left-button";
+	bestButton.addEventListener("click", () => {
+		textEditor.value = JSON.stringify({
+			mode: "fixed_servers",
+			rules: {
+				proxyForHttp: {
+					scheme: "socks5",
+					host: "1.2.3.4"
+				},
+				bypassList: ["foobar.com"]
+			}
+		});
+	})
 	itemLeftButtons.appendChild(bestButton);
 
 	itemButtons.appendChild(itemLeftButtons);
